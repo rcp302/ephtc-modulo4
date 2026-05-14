@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPHTC · Módulo 4 · Control de Hemorragias y Shock · RCP302</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:      #C0392B; --red-mid: #E74C3C; --red-lt: #FDF0EF;
+  --amber:    #D35400; --amber-lt: #FEF5EC;
+  --green:    #1A6B3A; --green-lt: #EBF7EF;
+  --blue:     #1A3A5C; --blue-mid: #2471A3; --blue-lt: #EBF4FB;
+  --teal:     #0E6655; --teal-lt: #E8F8F5;
+  --purple:   #6C3483; --purple-lt: #F5EEF8;
+  --dark:     #111820; --mid: #2C3E50;
+  --gray1:    #F4F6F8; --gray2: #E0E5EA; --gray3: #8899A6;
+  --white:    #FFFFFF;
+  --fh: 'Bebas Neue', sans-serif;
+  --fb: 'DM Sans', sans-serif;
+  --fm: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--fb); background: #EAECF0; color: var(--dark); }
+
+.hero { background: var(--dark); padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-55deg, transparent 0, transparent 18px, rgba(192,57,43,.06) 18px, rgba(192,57,43,.06) 19px); }
+.hero::after { content: 'STOP'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); font-family: var(--fh); font-size: 13rem; line-height: 1; color: rgba(192,57,43,.06); pointer-events: none; user-select: none; }
+.hero-inner { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; }
+.hero-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 1.2rem; flex-wrap: wrap; }
+.hero-tag { display: inline-flex; align-items: center; gap: 8px; background: var(--red); color: var(--white); font-family: var(--fm); font-size: 11px; letter-spacing: .08em; padding: 5px 14px; border-radius: 3px; }
+.hero-co { font-family: var(--fm); font-size: 11px; color: var(--gray3); letter-spacing: .06em; padding: 5px 14px; border: 1px solid rgba(255,255,255,.1); border-radius: 3px; }
+.hero h1 { font-family: var(--fh); font-size: clamp(2.4rem,5.5vw,4.2rem); line-height: .95; color: var(--white); letter-spacing: .02em; margin-bottom: .5rem; }
+.hero h1 em { color: var(--red-mid); font-style: normal; }
+.hero-sub { font-size: .93rem; color: var(--gray3); max-width: 520px; line-height: 1.65; margin-bottom: 1.8rem; }
+.hero-meta { display: flex; gap: 1.4rem; flex-wrap: wrap; }
+.hm { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--gray3); font-family: var(--fm); }
+.hm strong { color: var(--white); }
+
+.nav-wrap { background: var(--white); border-bottom: 1px solid var(--gray2); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.nav { max-width: 880px; margin: 0 auto; display: flex; gap: 2px; overflow-x: auto; padding: .5rem 1rem; scrollbar-width: none; }
+.nav::-webkit-scrollbar { display: none; }
+.nb { flex-shrink: 0; padding: 7px 16px; border-radius: 20px; border: none; background: none; font-family: var(--fb); font-size: 12.5px; font-weight: 500; color: var(--gray3); cursor: pointer; transition: all .2s; white-space: nowrap; }
+.nb:hover { background: var(--gray1); color: var(--dark); }
+.nb.active { background: var(--red); color: var(--white); }
+
+.main { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.section { display: none; }
+.section.active { display: block; animation: fadeUp .3s ease both; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.sec-tag { display: inline-block; font-family: var(--fm); font-size: 10px; letter-spacing: .08em; padding: 3px 10px; border-radius: 3px; background: var(--dark); color: var(--white); margin-bottom: 1rem; }
+.block-title { display: flex; align-items: center; gap: 14px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--gray2); }
+.block-num { font-family: var(--fh); font-size: 3.2rem; line-height: 1; color: var(--gray2); }
+.block-title-text h2 { font-family: var(--fh); font-size: 2rem; letter-spacing: .03em; color: var(--dark); line-height: 1; }
+.block-title-text p { font-size: 13px; color: var(--gray3); margin-top: 3px; }
+.lead { font-size: 14.5px; line-height: 1.75; color: var(--mid); border-left: 3px solid var(--red); padding-left: 1rem; margin-bottom: 1.8rem; }
+.sub-head { font-family: var(--fh); font-size: 1.25rem; letter-spacing: .04em; color: var(--dark); margin: 1.6rem 0 .8rem; display: flex; align-items: center; gap: 10px; }
+.sub-head::after { content: ''; flex: 1; height: 1px; background: var(--gray2); }
+
+.cards { display: grid; gap: 12px; margin-bottom: 1.4rem; }
+.c2 { grid-template-columns: 1fr 1fr; }
+.c3 { grid-template-columns: repeat(3,1fr); }
+.c4 { grid-template-columns: repeat(4,1fr); }
+@media(max-width:600px){ .c2,.c3,.c4 { grid-template-columns: 1fr; } }
+.card { background: var(--white); border-radius: 10px; border: 1px solid var(--gray2); padding: 1.1rem 1.2rem; transition: box-shadow .2s, transform .2s; }
+.card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.07); transform: translateY(-2px); }
+.card-icon { font-size: 1.4rem; margin-bottom: .5rem; }
+.card h3 { font-size: 13.5px; font-weight: 600; margin-bottom: .35rem; }
+.card p { font-size: 12.5px; line-height: 1.55; color: var(--gray3); }
+.card.ar { border-top: 3px solid var(--red); }
+.card.aa { border-top: 3px solid var(--amber); }
+.card.ag { border-top: 3px solid var(--green); }
+.card.ab { border-top: 3px solid var(--blue-mid); }
+.card.ap { border-top: 3px solid var(--purple); }
+.card.at { border-top: 3px solid var(--teal); }
+
+.alert { border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1.2rem; font-size: 13.5px; line-height: 1.6; border-left: 4px solid; }
+.a-red { background: var(--red-lt);    border-color: var(--red);      color: #7B241C; }
+.a-amb { background: var(--amber-lt);  border-color: var(--amber);    color: #784212; }
+.a-grn { background: var(--green-lt);  border-color: var(--green);    color: #145A32; }
+.a-blu { background: var(--blue-lt);   border-color: var(--blue-mid); color: #1A5276; }
+.a-pur { background: var(--purple-lt); border-color: var(--purple);   color: #4A235A; }
+
+.kp { list-style: none; margin-bottom: 1.4rem; }
+.kp li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--gray2); font-size: 13.5px; line-height: 1.55; color: var(--mid); }
+.kp li:last-child { border-bottom: none; }
+.kp-dot { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; margin-top: 1px; color: var(--white); }
+
+.tbl { width: 100%; border-collapse: collapse; margin-bottom: 1.4rem; font-size: 13px; }
+.tbl thead th { background: var(--dark); color: var(--white); padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; }
+.tbl tbody tr:nth-child(even) { background: var(--gray1); }
+.tbl tbody td { padding: 8px 12px; border-bottom: 1px solid var(--gray2); line-height: 1.5; vertical-align: top; }
+.tbl tbody tr:last-child td { border-bottom: none; }
+.tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 3px; font-weight: 600; font-family: var(--fm); }
+.t-red { background: var(--red-lt); color: var(--red); }
+.t-grn { background: var(--green-lt); color: var(--green); }
+.t-amb { background: var(--amber-lt); color: var(--amber); }
+.t-pur { background: var(--purple-lt); color: var(--purple); }
+
+.step-num-card { display: flex; gap: 14px; align-items: flex-start; background: var(--white); border: 1px solid var(--gray2); border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 10px; }
+.step-circle { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--white); flex-shrink: 0; }
+.step-content h4 { font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+.step-content p { font-size: 13px; color: var(--gray3); line-height: 1.55; }
+
+/* Triada letal visual */
+.triada { display: flex; justify-content: center; align-items: center; gap: 0; margin: 1.2rem 0 1.6rem; flex-wrap: wrap; }
+.triada-item { background: var(--white); border: 1px solid var(--gray2); border-radius: 10px; padding: 1rem; text-align: center; width: 160px; margin: 6px; }
+.triada-item .ti-icon { font-size: 2rem; margin-bottom: 6px; }
+.triada-item h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.triada-item p { font-size: 11.5px; color: var(--gray3); line-height: 1.4; }
+.triada-arrow { font-size: 1.5rem; color: var(--red); margin: 0 4px; font-weight: 700; align-self: center; }
+
+/* Quiz */
+.quiz-card { background: var(--white); border: 1px solid var(--gray2); border-radius: 10px; padding: 1.3rem; margin-bottom: 10px; }
+.quiz-q { font-size: 14px; font-weight: 600; margin-bottom: 1rem; }
+.quiz-opts { display: flex; flex-direction: column; gap: 7px; }
+.quiz-opt { padding: 9px 14px; border-radius: 6px; border: 1.5px solid var(--gray2); background: var(--gray1); cursor: pointer; font-size: 13px; transition: all .15s; text-align: left; }
+.quiz-opt:hover:not(.disabled) { border-color: var(--blue-mid); background: var(--blue-lt); }
+.quiz-opt.correct { border-color: var(--green); background: var(--green-lt); color: var(--green); font-weight: 500; }
+.quiz-opt.wrong   { border-color: var(--red);   background: var(--red-lt);   color: var(--red); }
+.quiz-opt.disabled { cursor: default; }
+.quiz-fb { margin-top: .8rem; padding: .7rem 1rem; border-radius: 6px; font-size: 13px; line-height: 1.55; display: none; }
+.quiz-fb.show { display: block; }
+.quiz-score { background: var(--dark); color: var(--white); border-radius: 10px; padding: 1.2rem 1.5rem; text-align: center; display: none; margin-top: 1rem; }
+.quiz-score .sv { font-family: var(--fh); font-size: 3rem; color: var(--red-mid); }
+.btn-quiz { margin-top: 1rem; padding: 9px 20px; border-radius: 6px; border: none; background: var(--red); color: var(--white); font-family: var(--fb); font-size: 13px; font-weight: 500; cursor: pointer; }
+.btn-quiz.sec { background: var(--gray1); color: var(--dark); border: 1px solid var(--gray2); }
+
+.doc-footer { max-width: 880px; margin: 0 auto; padding: .8rem 1.5rem 2rem; font-size: 11px; color: var(--gray3); border-top: 1px solid var(--gray2); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-brand">
+      <div class="hero-tag">EPHTC · MÓDULO 4</div>
+      <div class="hero-co">RCP302 FORMACIÓN EN EMERGENCIAS</div>
+      <div class="hero-co" style="border-color:rgba(231,76,60,.4);color:#E88080;">IPMI OFFICIAL COURSE</div>
+    </div>
+    <h1>Control de<br><em>Hemorragias</em><br>y Shock</h1>
+    <p class="hero-sub">Torniquetes, empaquetamiento, compresión de uniones, resucitación hemostática, ácido tranexámico y triada letal del trauma. Adultos y pediátrico.</p>
+    <div class="hero-meta">
+      <div class="hm">🩸 <strong>Torniquetes CAT/SOFT-T</strong></div>
+      <div class="hm">💉 <strong>TXA protocolo completo</strong></div>
+      <div class="hm">👶 <strong>Pediátrico incluido</strong></div>
+      <div class="hm">✅ <strong>Autoevaluación</strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-wrap">
+  <nav class="nav" role="tablist">
+    <button class="nb active" onclick="show(0)">🩸 Torniquetes</button>
+    <button class="nb" onclick="show(1)">🧱 Empaquetamiento</button>
+    <button class="nb" onclick="show(2)">🔗 Compresión uniones</button>
+    <button class="nb" onclick="show(3)">💧 Resucitación</button>
+    <button class="nb" onclick="show(4)">💉 Ácido tranexámico</button>
+    <button class="nb" onclick="show(5)">🌡️ Triada letal</button>
+    <button class="nb" onclick="show(6)">👶 Pediátrico</button>
+    <button class="nb" onclick="show(7)">✅ Autoevaluación</button>
+  </nav>
+</div>
+
+<main class="main">
+
+<!-- ══ 0 · TORNIQUETES ══ -->
+<div class="section active" id="sec-0">
+  <span class="sec-tag">MÓDULO 4 · TORNIQUETES</span>
+  <div class="block-title">
+    <div class="block-num">4A</div>
+    <div class="block-title-text">
+      <h2>Torniquetes de Combate</h2>
+      <p>CAT y SOFT-T Wide — control de hemorragia arterial en extremidades</p>
+    </div>
+  </div>
+
+  <p class="lead">El torniquete de combate es la intervención individual que más vidas salva en el trauma prehospitalario. Correctamente aplicado en los primeros minutos, detiene una hemorragia arterial que de otro modo sería mortal en 3-5 minutos. Su uso no se limita al entorno militar — es estándar en todo sistema EMS avanzado.</p>
+
+  <div class="alert a-red">
+    <strong>🩸 Regla fundamental:</strong> ante una hemorragia arterial en extremidad, el torniquete va primero. No perder tiempo en compresión directa que no funciona. Un torniquete correctamente aplicado <strong>no causa daño permanente</strong> si se retira antes de las 2 horas — la pérdida de la extremidad por no colocarlo es irreversible.
+  </div>
+
+  <div class="sub-head">CAT vs SOFT-T Wide — Comparativa</div>
+  <table class="tbl">
+    <thead><tr><th>Característica</th><th>CAT (Combat Application Tourniquet)</th><th>SOFT-T Wide</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mecanismo</strong></td><td>Varilla de giro con hebilla de bloqueo</td><td>Varilla de giro con correa ancha (38 mm)</td></tr>
+      <tr><td><strong>Anchura</strong></td><td>38 mm</td><td>38 mm</td></tr>
+      <tr><td><strong>Aplicación con una mano</strong></td><td>Sí — diseñado para autoaplicación</td><td>Sí</td></tr>
+      <tr><td><strong>Presión necesaria</strong></td><td>Alta — requiere apriete firme</td><td>Menor presión — mejor tolerado</td></tr>
+      <tr><td><strong>Estándar</strong></td><td>TCCC / NAEMSP — más estudiado</td><td>Alternativa válida, creciente evidencia</td></tr>
+      <tr><td><strong>Uso pediátrico</strong></td><td>No recomendado &lt; 8 años (extremidad demasiado pequeña)</td><td>Ídem</td></tr>
+      <tr><td><strong>Precio aproximado</strong></td><td>~25-35 € / unidad</td><td>~35-45 € / unidad</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-head">Técnica de aplicación — CAT paso a paso</div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--red)">1</div><div class="step-content"><h4>Localización</h4><p>Aplicar <strong>5-8 cm proximal a la herida</strong> (sobre la ropa si es necesario — no pierdas tiempo retirando ropa). En hemorragia en muslo o brazo: aplicar en el tercio proximal del segmento.</p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--red)">2</div><div class="step-content"><h4>Colocación de la correa</h4><p>Pasar la correa alrededor de la extremidad. Introducir el extremo libre en la hebilla y apretar hasta que quede tenso, pegado a la piel, sin pliegues. La varilla de giro debe quedar accesible.</p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--red)">3</div><div class="step-content"><h4>Giro de la varilla</h4><p>Girar la varilla en el sentido que apriete la correa. Continuar girando hasta que <strong>cese el sangrado distal</strong> y desaparezca el pulso distal. No parar antes aunque el paciente refiera dolor intenso.</p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--red)">4</div><div class="step-content"><h4>Bloqueo y documentación</h4><p>Bloquear la varilla en el clip de seguridad. Escribir la <strong>hora de aplicación directamente sobre el torniquete</strong> con rotulador permanente. Registrar también en el parte prehospitalario. <strong>Nunca tapar el torniquete.</strong></p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--red)">5</div><div class="step-content"><h4>Verificación de eficacia</h4><p>Comprobar ausencia de sangrado activo distal al torniquete. Si persiste el sangrado → segundo torniquete inmediatamente proximal al primero. Si hay dos torniquetes y sigue sangrando → empaquetamiento con hemostático por encima.</p></div></div>
+
+  <div class="sub-head">Errores críticos con el torniquete</div>
+  <div class="cards c3">
+    <div class="card ar"><div class="card-icon">❌</div><h3>Colocación demasiado distal</h3><p>Por debajo del codo o la rodilla — ineficaz por la doble estructura ósea (radio-cúbito, tibia-peroné). El torniquete no puede comprimir ambas arterias. Siempre en el segmento de un solo hueso.</p></div>
+    <div class="card ar"><div class="card-icon">❌</div><h3>No apretar suficiente</h3><p>El torniquete "venoso" — comprime las venas pero no las arterias, aumentando el sangrado. El criterio de eficacia es el cese del sangrado y la ausencia de pulso distal, no el número de giros.</p></div>
+    <div class="card ar"><div class="card-icon">❌</div><h3>Aflojar durante el traslado</h3><p>Una vez aplicado, el torniquete no se retira ni afloja en el entorno prehospitalario. Solo lo retira el equipo receptor en entorno con acceso quirúrgico disponible. Aflojar puede desplazar el coágulo formado.</p></div>
+  </div>
+
+  <div class="alert a-amb">
+    <strong>⏱ Tiempo máximo:</strong> el torniquete es seguro hasta <strong>2 horas</strong> desde su aplicación sin daño isquémico permanente significativo. Entre 2-6 horas el riesgo aumenta progresivamente. Más de 6 horas → riesgo alto de amputación y síndrome de reperfusión. La documentación de la hora es crítica para el equipo receptor.
+  </div>
+</div>
+
+<!-- ══ 1 · EMPAQUETAMIENTO ══ -->
+<div class="section" id="sec-1">
+  <span class="sec-tag">MÓDULO 4 · EMPAQUETAMIENTO Y HEMOSTÁTICOS</span>
+  <div class="block-title">
+    <div class="block-num">4B</div>
+    <div class="block-title-text">
+      <h2>Empaquetamiento y Agentes Hemostáticos</h2>
+      <p>Wound packing — heridas profundas no accesibles con torniquete</p>
+    </div>
+  </div>
+
+  <p class="lead">El empaquetamiento con agentes hemostáticos es la técnica de elección para el control de hemorragias en heridas profundas, cavitadas o de localización que impide el torniquete. Combina la compresión mecánica directa con la acción bioquímica del hemostático para acelerar la formación del coágulo.</p>
+
+  <div class="sub-head">Agentes hemostáticos — Tipos y comparativa</div>
+  <table class="tbl">
+    <thead><tr><th>Agente</th><th>Mecanismo</th><th>Presentación</th><th>Uso recomendado</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Combat Gauze (QuikClot)</strong></td><td>Caolín — activa la cascada de coagulación independientemente de los factores</td><td>Gasa impregnada en rollo</td><td><span class="tag t-red">TCCC primera línea</span></td></tr>
+      <tr><td><strong>Celox Gauze</strong></td><td>Quitosano — atrapa eritrocitos y plaquetas formando un gel hemostático</td><td>Gasa en Z o rollo</td><td><span class="tag t-amb">Eficaz en anticoagulados</span></td></tr>
+      <tr><td><strong>ChitoGauze</strong></td><td>Quitosano</td><td>Gasa impregnada</td><td><span class="tag t-amb">Alternativa Celox</span></td></tr>
+      <tr><td><strong>Celox Rapid</strong></td><td>Quitosano de acción rápida</td><td>Gasa en Z</td><td><span class="tag t-grn">Tiempo compresión reducido (60 s)</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-head">Técnica de empaquetamiento — paso a paso</div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--amber)">1</div><div class="step-content"><h4>Exposición de la herida</h4><p>Retirar ropa y objetos que obstruyan el acceso. Identificar el punto exacto de sangrado dentro de la herida — el hemostático debe llegar al origen del sangrado, no solo a la superficie.</p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--amber)">2</div><div class="step-content"><h4>Introducción de la gasa hemostática</h4><p>Introducir la gasa en espiral desde el fondo de la herida hacia la superficie, apretando con los dedos en cada vuelta. <strong>No dejar espacios vacíos.</strong> Si la gasa se acaba antes de llenar la herida, añadir una segunda gasa por encima de la primera.</p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--amber)">3</div><div class="step-content"><h4>Compresión manual directa</h4><p>Aplicar <strong>compresión manual firme y continua durante 3 minutos</strong> (5 minutos con Combat Gauze estándar). No aliviar la presión para "comprobar" el resultado — si se suelta antes de tiempo se rompe el coágulo en formación.</p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--amber)">4</div><div class="step-content"><h4>Verificación y apósito compresivo</h4><p>Tras los 3-5 minutos, verificar sin retirar la gasa. Si no hay sangrado activo visible: cubrir con apósito compresivo y fijar con venda elástica. Si persiste el sangrado: ampliar el empaquetamiento o añadir torniquete de unión si la localización lo permite.</p></div></div>
+
+  <div class="alert a-amb">
+    <strong>⚠ No retirar el empaquetamiento en campo:</strong> la gasa hemostática se deja in situ hasta la llegada al hospital. Retirarla en el entorno prehospitalario puede desencadenar una hemorragia masiva al romper el coágulo formado. Comunicar al equipo receptor el tipo de hemostático utilizado.
+  </div>
+
+  <div class="sub-head">Compresión directa sin hemostático</div>
+  <div class="cards c2">
+    <div class="card aa"><div class="card-icon">🤲</div><h3>Indicación</h3><p>Hemorragias venosas o moderadas en localizaciones accesibles. Presión continua con gasa seca durante ≥ 10 minutos sin levantar el apósito. Si empapa, añadir capas sobre la gasa existente — no retirar.</p></div>
+    <div class="card aa"><div class="card-icon">⚠️</div><h3>Limitación</h3><p>Ineficaz en hemorragias arteriales profundas. No libera al operador durante el traslado. Reservar el hemostático para cuando la compresión directa sola sea insuficiente o la localización lo justifique.</p></div>
+  </div>
+</div>
+
+<!-- ══ 2 · COMPRESIÓN DE UNIONES ══ -->
+<div class="section" id="sec-2">
+  <span class="sec-tag">MÓDULO 4 · COMPRESIÓN DE UNIONES (JUNCTIONAL)</span>
+  <div class="block-title">
+    <div class="block-num">4C</div>
+    <div class="block-title-text">
+      <h2>Hemorragia en Zonas de Unión</h2>
+      <p>Junctional hemorrhage — ingle, axila, cuello, glúteo</p>
+    </div>
+  </div>
+
+  <p class="lead">Las hemorragias en zonas de unión (junctional hemorrhage) son las más letales y las más difíciles de controlar: ocurren en localizaciones anatómicas donde el torniquete convencional no puede aplicarse y la compresión directa es insuficiente por la profundidad de los vasos afectados.</p>
+
+  <div class="alert a-red">
+    <strong>🚨 La zona de unión más letal:</strong> la hemorragia de la arteria femoral en la ingle (zona inguinal) es la causa más frecuente de muerte por hemorragia externa no controlada en trauma. No accesible con torniquete CAT/SOFT-T convencional.
+  </div>
+
+  <div class="sub-head">Localizaciones y técnicas por zona</div>
+  <table class="tbl">
+    <thead><tr><th>Zona</th><th>Vasos en riesgo</th><th>Técnica de elección</th><th>Dispositivo específico</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ingle / zona inguinal</strong></td><td>Arteria y vena femoral</td><td>Empaquetamiento profundo + compresión manual · Torniquete de unión (JETT / SAM-JT)</td><td><span class="tag t-red">JETT / SAM Junctional TQ</span></td></tr>
+      <tr><td><strong>Axila</strong></td><td>Arteria y vena axilar / subclavia</td><td>Empaquetamiento profundo con hemostático + compresión manual sostenida</td><td><span class="tag t-amb">Empaquetamiento + presión</span></td></tr>
+      <tr><td><strong>Cuello</strong></td><td>Carótida, yugular, vertebral</td><td>Compresión directa sin comprimir ambos lados simultáneamente. Empaquetamiento con hemostático en heridas penetrantes</td><td><span class="tag t-amb">Cuidado: no comprimir bilateral</span></td></tr>
+      <tr><td><strong>Glúteo / perineal</strong></td><td>Arteria ilíaca interna, pudenda</td><td>Empaquetamiento profundo con hemostático. Fractura pélvica → faja pélvica de emergencia</td><td><span class="tag t-pur">Faja pélvica + hemostático</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-head">Torniquetes de unión — JETT y SAM Junctional TQ</div>
+  <div class="cards c2">
+    <div class="card ar">
+      <div class="card-icon">🔴</div>
+      <h3>JETT (Junctional Emergency Treatment Tool)</h3>
+      <p>Sistema de almohadillas de presión sobre la zona inguinal conectadas a un cinturón circunferencial. Se coloca alrededor de la pelvis y la almohadilla se posiciona sobre el pulso femoral. La presión se aplica con un tornillo central. Tiempo de aplicación: 60-90 s.</p>
+    </div>
+    <div class="card ar">
+      <div class="card-icon">🔶</div>
+      <h3>SAM Junctional Tourniquet</h3>
+      <p>Similar al JETT. Cinturón pélvico con almohadillas bilaterales de presión inguinal. Permite tratamiento bilateral simultáneo. Compacto y de fácil transporte en la mochila de trauma.</p>
+    </div>
+  </div>
+
+  <div class="sub-head">Técnica de empaquetamiento inguinal</div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--red)">1</div><div class="step-content"><h4>Localización del punto de sangrado</h4><p>Identificar el canal femoral. El sangrado arterial femoral es pulsátil y profundo. Colocar al paciente en decúbito supino con la cadera en extensión neutra.</p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--red)">2</div><div class="step-content"><h4>Introducción del hemostático</h4><p>Introducir la gasa hemostática (Combat Gauze o Celox) con los dedos de forma enérgica hasta el fondo del canal, apuntando hacia el punto de pulsación máxima. La gasa debe llegar al vaso para ser eficaz.</p></div></div>
+  <div class="step-num-card"><div class="step-circle" style="background:var(--red)">3</div><div class="step-content"><h4>Compresión intensa durante 3-5 minutos</h4><p>Presión directa con ambos pulgares o el puño sobre el empaquetamiento. Si la anatomía lo permite, añadir un torniquete de unión sobre el empaquetamiento para mantener la presión durante el traslado sin necesitar un operador dedicado.</p></div></div>
+
+  <div class="alert a-blu">
+    <strong>💡 Fractura pélvica inestable:</strong> en la fractura pélvica, la hemorragia no es externa sino retroperitoneal. El control es la <strong>faja pélvica de emergencia</strong> (SAM Pelvic Sling o similar) colocada a nivel del trocánter mayor — no a nivel de la cresta ilíaca. La faja estabiliza la pelvis y reduce el volumen del hematoma retroperitoneal. Complementar con empaquetamiento si hay heridas externas asociadas.
+  </div>
+</div>
+
+<!-- ══ 3 · RESUCITACIÓN ══ -->
+<div class="section" id="sec-3">
+  <span class="sec-tag">MÓDULO 4 · RESUCITACIÓN HEMOSTÁTICA</span>
+  <div class="block-title">
+    <div class="block-num">4D</div>
+    <div class="block-title-text">
+      <h2>Resucitación Hemostática y Fluidoterapia</h2>
+      <p>Damage Control Resuscitation — el nuevo paradigma del trauma hemorrágico</p>
+    </div>
+  </div>
+
+  <p class="lead">La resucitación hemostática (Damage Control Resuscitation, DCR) ha reemplazado a la fluidoterapia agresiva con cristaloides como estándar en el trauma hemorrágico grave. Su objetivo es mantener la perfusión mínima necesaria mientras se controla la hemorragia, sin agravar la triada letal.</p>
+
+  <div class="sub-head">Principios de la resucitación hemostática</div>
+  <div class="cards c3">
+    <div class="card ar"><div class="card-icon">📊</div><h3>Hipotensión permisiva</h3><p>TAS objetivo <strong>80-90 mmHg</strong> en trauma sin TCE. Evitar la "normalización" de la TAS a expensas de agravar la hemorragia y diluir los factores de coagulación.</p></div>
+    <div class="card ar"><div class="card-icon">🩸</div><h3>Ratio 1:1:1</h3><p>En el hospital: plasma : plaquetas : concentrado de hematíes en ratio 1:1:1. En campo: transfusión de sangre entera o plasma liofilizado si disponible (protocolos HEMS avanzados).</p></div>
+    <div class="card ar"><div class="card-icon">💧</div><h3>Cristaloides limitados</h3><p>Los cristaloides (SSF, Ringer) diluyen los factores de coagulación y agravan la hipotermia y acidosis. Usar bolos de <strong>250 ml</strong> con reevaluación tras cada uno.</p></div>
+  </div>
+
+  <div class="sub-head">Fluidoterapia prehospitalaria — Protocolo</div>
+  <table class="tbl">
+    <thead><tr><th>Situación</th><th>TAS objetivo</th><th>Fluido de elección</th><th>Bolo</th><th>Límite</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Trauma sin TCE</strong></td><td>80-90 mmHg</td><td>Ringer lactato o SSF 0,9%</td><td>250 ml IV/IO</td><td>Reevaluar tras cada bolo — no superar 1.000 ml si no hay respuesta</td></tr>
+      <tr><td><strong>Trauma + TCE grave</strong></td><td>≥ 90 mmHg</td><td>Ringer lactato o SSF 0,9%</td><td>250 ml IV/IO</td><td>Mantener TAS ≥ 90 mmHg para preservar presión de perfusión cerebral</td></tr>
+      <tr><td><strong>PCR traumática</strong></td><td>Fluidos de resucitación</td><td>SSF 0,9% o Ringer</td><td>500 ml rápido</td><td>Mientras se trata la causa — no sustituye al control quirúrgico</td></tr>
+      <tr><td><strong>Plasma liofilizado (HEMS)</strong></td><td>80-90 mmHg</td><td>Plasma liofilizado reconstituido</td><td>Según protocolo</td><td>Estándar en algunos sistemas HEMS europeos para trauma grave</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-head">Acceso vascular en trauma — Prioridades</div>
+  <ul class="kp">
+    <li><div class="kp-dot" style="background:var(--blue-mid)">1</div><div><strong>Vía IV periférica:</strong> dos vías gruesas (14-16G) en fosas antecubitales. Primera opción si el acceso es posible en menos de 90 segundos. Flujo máximo con catéteres cortos y gruesos.</div></li>
+    <li><div class="kp-dot" style="background:var(--blue-mid)">2</div><div><strong>Vía intraósea (IO):</strong> si el IV falla en 90 segundos en un paciente con shock grave o PCR. Tibia proximal o húmero proximal. Flujo equivalente al IV con la misma presión de infusión. Todos los fármacos de emergencia son administrables por vía IO.</div></li>
+    <li><div class="kp-dot" style="background:var(--blue-mid)">3</div><div><strong>Vía central (HEMS):</strong> acceso femoral o yugular en entorno HEMS si los anteriores son inaccesibles. No retrasar el traslado para canalizar una vía central en SEM básico.</div></li>
+  </ul>
+
+  <div class="alert a-grn">
+    <strong>💡 Regla práctica prehospitalaria:</strong> en el trauma hemorrágico grave el mejor tratamiento es <strong>llegar rápido al quirófano</strong>. La resucitación en campo es un puente, no un tratamiento definitivo. Cada minuto adicional en escena sin control quirúrgico de la hemorragia interna empeora el pronóstico.
+  </div>
+</div>
+
+<!-- ══ 4 · TXA ══ -->
+<div class="section" id="sec-4">
+  <span class="sec-tag">MÓDULO 4 · ÁCIDO TRANEXÁMICO</span>
+  <div class="block-title">
+    <div class="block-num">4E</div>
+    <div class="block-title-text">
+      <h2>Ácido Tranexámico (TXA)</h2>
+      <p>Antifibrinolítico prehospitalario — el fármaco que cambia el pronóstico</p>
+    </div>
+  </div>
+
+  <p class="lead">El ácido tranexámico (TXA) es el único fármaco con evidencia sólida de reducción de mortalidad en el trauma hemorrágico grave cuando se administra de forma precoz. El estudio CRASH-2 (2010) demostró una reducción del 1,5% en mortalidad global y del 0,8% en muertes por hemorragia — con más de 20.000 pacientes. La ventana de eficacia es estrecha: cada hora de retraso reduce el beneficio.</p>
+
+  <div class="sub-head">Mecanismo de acción</div>
+  <div class="cards c2">
+    <div class="card ab"><div class="card-icon">🔬</div><h3>¿Qué hace el TXA?</h3><p>El TXA es un antifibrinolítico — inhibe la activación del plasminógeno a plasmina, impidiendo la disolución del coágulo ya formado. En el trauma grave, la fibrinólisis patológica (hiperfibrinólisis) puede disolver los coágulos antes de que la hemorragia sea controlada. El TXA la bloquea.</p></div>
+    <div class="card ab"><div class="card-icon">⚠️</div><h3>¿Qué NO hace el TXA?</h3><p>El TXA no forma coágulos nuevos ni actúa como hemostático directo. No sustituye al control mecánico de la hemorragia (torniquetes, empaquetamiento). Es un complemento, no un sustituto. Tampoco corrige la coagulopatía dilucional por cristaloides.</p></div>
+  </div>
+
+  <div class="sub-head">Protocolo de administración — CRASH-2 / PATCH</div>
+  <div class="alert a-blu">
+    <strong>⏱ Ventana de oro:</strong> el TXA debe administrarse en las primeras <strong>3 horas desde el trauma</strong>. Más allá de las 3 horas no aporta beneficio y puede ser perjudicial (aumenta el riesgo de eventos trombóticos). La administración prehospitalaria precoz es determinante.
+  </div>
+
+  <table class="tbl">
+    <thead><tr><th>Parámetro</th><th>Adultos</th><th>Pediátrico (≥ 12 años o &gt;40 kg)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Dosis de carga</strong></td><td>1 g IV en 10 minutos</td><td>15 mg/kg IV (máx 1 g) en 10 minutos</td></tr>
+      <tr><td><strong>Segunda dosis (mantenimiento)</strong></td><td>1 g IV en 8 horas (se inicia en el hospital)</td><td>15 mg/kg IV en 8 horas (se inicia en el hospital)</td></tr>
+      <tr><td><strong>Dilución</strong></td><td>1 g en 100 ml SSF o SG5%</td><td>Diluir en 100 ml SSF o SG5%</td></tr>
+      <tr><td><strong>Vía</strong></td><td>IV periférica o IO</td><td>IV periférica o IO</td></tr>
+      <tr><td><strong>Velocidad de infusión</strong></td><td>Lento — no en bolo rápido (hipotensión)</td><td>Lento — no en bolo rápido</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-head">Indicaciones y contraindicaciones prehospitalarias</div>
+  <div class="cards c2">
+    <div class="card ag">
+      <div class="card-icon">✅</div>
+      <h3>Indicaciones (todas deben cumplirse)</h3>
+      <p>• Trauma con hemorragia significativa (real o sospechada)<br>
+      • TAS &lt; 90 mmHg o FC &gt; 110 lpm<br>
+      • Tiempo desde el trauma &lt; 3 horas<br>
+      • Edad ≥ 15 años (o &gt;40 kg en pediátrico)<br>
+      • Capacidad de canalizar una vía IV/IO</p>
+    </div>
+    <div class="card ar">
+      <div class="card-icon">❌</div>
+      <h3>Contraindicaciones</h3>
+      <p>• Tiempo desde el trauma &gt; 3 horas — no administrar<br>
+      • Antecedente de trombosis (TVP, TEP, ACVA) reciente<br>
+      • Coagulación intravascular diseminada (CID) activa<br>
+      • Hematuria macroscópica (obstrucción ureteral por coágulos)<br>
+      • Alergia conocida al TXA (muy rara)</p>
+    </div>
+  </div>
+
+  <div class="alert a-grn">
+    <strong>🏥 Comunicar al hospital:</strong> documentar hora exacta de administración, dosis administrada y vía. El equipo receptor debe conocer que ya se ha administrado la primera dosis para planificar la segunda dosis de mantenimiento en el hospital.
+  </div>
+</div>
+
+<!-- ══ 5 · TRIADA LETAL ══ -->
+<div class="section" id="sec-5">
+  <span class="sec-tag">MÓDULO 4 · TRIADA LETAL</span>
+  <div class="block-title">
+    <div class="block-num">4F</div>
+    <div class="block-title-text">
+      <h2>Triada Letal del Trauma</h2>
+      <p>Hipotermia + Acidosis + Coagulopatía — el círculo vicioso que mata</p>
+    </div>
+  </div>
+
+  <p class="lead">La triada letal del trauma es el conjunto de tres alteraciones fisiopatológicas que se potencian mutuamente y que, una vez establecidas, llevan al paciente a una espiral de deterioro irreversible. La prevención prehospitalaria de la triada es tan importante como el control de la hemorragia.</p>
+
+  <div class="triada">
+    <div class="triada-item" style="border-top:3px solid var(--blue-mid)">
+      <div class="ti-icon">🌡️</div>
+      <h4 style="color:var(--blue-mid)">Hipotermia</h4>
+      <p>T° &lt; 35°C. Altera la función plaquetaria y los factores de coagulación. Causa FV refractaria si &lt; 30°C.</p>
+    </div>
+    <div class="triada-arrow">⇄</div>
+    <div class="triada-item" style="border-top:3px solid var(--red)">
+      <div class="ti-icon">⚗️</div>
+      <h4 style="color:var(--red)">Acidosis</h4>
+      <p>pH &lt; 7.35. Hipoperfusión → metabolismo anaerobio → lactato. Inhibe factores de coagulación hasta un 90% si pH &lt; 7.1.</p>
+    </div>
+    <div class="triada-arrow">⇄</div>
+    <div class="triada-item" style="border-top:3px solid var(--amber)">
+      <div class="ti-icon">🧪</div>
+      <h4 style="color:var(--amber)">Coagulopatía</h4>
+      <p>Consumo y dilución de factores. Potenciada por la hipotermia y la acidosis. Sangrado en sábana, equimosis extensas.</p>
+    </div>
+  </div>
+
+  <div class="sub-head">Cómo se potencian mutuamente</div>
+  <ul class="kp">
+    <li><div class="kp-dot" style="background:var(--blue-mid)">→</div><div><strong>Hipotermia empeora la coagulación:</strong> las enzimas de la cascada de coagulación funcionan de forma óptima a 37°C. A 33°C, la actividad plaquetaria se reduce un 30%. A 30°C, la coagulación es prácticamente ineficaz independientemente de los niveles de factores.</div></li>
+    <li><div class="kp-dot" style="background:var(--red)">→</div><div><strong>Acidosis inhibe los factores:</strong> el factor Xa y la trombina son especialmente sensibles al pH. A pH 7.2, la eficacia de los factores se reduce un 50%. A pH 7.0, hasta un 90%. La acidosis es el indicador clínico más sensible de shock no compensado.</div></li>
+    <li><div class="kp-dot" style="background:var(--amber)">→</div><div><strong>Coagulopatía perpetúa la hemorragia:</strong> sin coagulación efectiva, cualquier herida continúa sangrando. La pérdida de sangre agrava la hipovolemia y el shock, que profundiza la acidosis y la hipotermia.</div></li>
+    <li><div class="kp-dot" style="background:var(--red)">→</div><div><strong>Los cristaloides agravan las tres:</strong> los bolos masivos de SSF frío diluyen los factores de coagulación (coagulopatía dilucional), aportan frío (hipotermia) y generan acidosis hiperclorémica. Un argumento más para la resucitación hipotensiva con bolos pequeños.</div></li>
+  </ul>
+
+  <div class="sub-head">Prevención prehospitalaria de la triada letal</div>
+  <div class="cards c3">
+    <div class="card ab"><div class="card-icon">🧣</div><h3>Prevenir la hipotermia</h3><p>Cubrir al paciente con manta isotérmica tras la exposición. Fluidos IV templados si disponibles. Minimizar el tiempo de exposición. Calefactar la cabina de la ambulancia. Retirar la ropa mojada.</p></div>
+    <div class="card ar"><div class="card-icon">🩸</div><h3>Controlar la hemorragia</h3><p>El control mecánico de la hemorragia (X del XABCDE) es la intervención más eficaz para prevenir la acidosis — al reducir el shock, se reduce el metabolismo anaerobio y la producción de lactato.</p></div>
+    <div class="card aa"><div class="card-icon">💧</div><h3>Fluidoterapia inteligente</h3><p>Bolos de 250 ml con reevaluación. Evitar cristaloides masivos. TXA precoz. Plasma liofilizado si disponible. El objetivo no es "normalizar" la TAS sino mantener la perfusión mínima hasta el quirófano.</p></div>
+  </div>
+
+  <div class="alert a-red">
+    <strong>⚠ Punto de no retorno:</strong> cuando los tres vértices de la triada están establecidos (hipotermia severa + acidosis grave + coagulopatía clínica), el paciente entra en una espiral que raramente puede revertirse sin cirugía inmediata y terapias de soporte intensivas. La prevención prehospitalaria es infinitamente más eficaz que el tratamiento hospitalario tardío.
+  </div>
+</div>
+
+<!-- ══ 6 · PEDIÁTRICO ══ -->
+<div class="section" id="sec-6">
+  <span class="sec-tag">MÓDULO 4 · TRAUMA PEDIÁTRICO — HEMORRAGIA Y SHOCK</span>
+  <div class="block-title">
+    <div class="block-num">4G</div>
+    <div class="block-title-text">
+      <h2>Hemorragia y Shock en Trauma Pediátrico</h2>
+      <p>Particularidades del niño traumatizado — dosis, acceso vascular y signos de alarma</p>
+    </div>
+  </div>
+
+  <p class="lead">El niño no es un adulto pequeño. Su reserva fisiológica es mayor que la del adulto, lo que puede dar una falsa sensación de estabilidad hasta que colapsa de forma brusca e impredecible. Los signos de shock en el niño son sutiles y tardíos — cuando aparece la hipotensión, el shock ya es avanzado.</p>
+
+  <div class="alert a-red">
+    <strong>⚠ El niño engaña:</strong> la taquicardia es el primer y más sensible signo de shock pediátrico. La hipotensión es un signo tardío — cuando aparece, el niño ha perdido más del 30-40% de su volemia. No esperar a la hipotensión para tratar el shock.
+  </div>
+
+  <div class="sub-head">Valores normales de FC y TAS por edad</div>
+  <table class="tbl">
+    <thead><tr><th>Edad</th><th>FC normal (lpm)</th><th>FC alarma (lpm)</th><th>TAS mínima aceptable</th><th>Volemia estimada</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Lactante (&lt;1 año)</strong></td><td>100-160</td><td>&gt;160</td><td>70 mmHg</td><td>80 ml/kg</td></tr>
+      <tr><td><strong>Preescolar (1-5 años)</strong></td><td>90-140</td><td>&gt;140</td><td>80 mmHg</td><td>80 ml/kg</td></tr>
+      <tr><td><strong>Escolar (6-12 años)</strong></td><td>70-120</td><td>&gt;120</td><td>90 mmHg</td><td>80 ml/kg</td></tr>
+      <tr><td><strong>Adolescente (&gt;12 años)</strong></td><td>60-100</td><td>&gt;100</td><td>90 mmHg</td><td>70 ml/kg</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-head">Control de hemorragia en el niño</div>
+  <div class="cards c2">
+    <div class="card ar"><div class="card-icon">🩸</div><h3>Torniquete pediátrico</h3><p>El CAT y SOFT-T estándar <strong>no son adecuados para menores de 8 años</strong> — la extremidad es demasiado pequeña. Para niños pequeños, usar la técnica de compresión directa + empaquetamiento o un torniquete específico pediátrico si está disponible. En adolescentes (&gt;8 años y extremidad adulta), usar el torniquete estándar.</p></div>
+    <div class="card ar"><div class="card-icon">🧱</div><h3>Empaquetamiento con hemostático</h3><p>La técnica es idéntica a la del adulto. Seleccionar el tamaño de la gasa adecuado al tamaño de la herida. La compresión manual debe ser proporcionada al tamaño del niño pero igualmente firme durante los 3-5 minutos requeridos.</p></div>
+  </div>
+
+  <div class="sub-head">Fluidoterapia en shock hemorrágico pediátrico</div>
+  <table class="tbl">
+    <thead><tr><th>Situación</th><th>Fluido</th><th>Dosis</th><th>Objetivo TAS</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Shock compensado (taquicardia sin hipotensión)</strong></td><td>Ringer lactato o SSF 0,9%</td><td>10-20 ml/kg IV/IO en 15-20 min</td><td>TAS mínima para la edad + mejora de FC</td></tr>
+      <tr><td><strong>Shock descompensado (hipotensión)</strong></td><td>Ringer lactato o SSF 0,9%</td><td>20 ml/kg IV/IO en bolo rápido · Repetir si no hay respuesta (máx 3 bolos = 60 ml/kg)</td><td>TAS mínima para la edad</td></tr>
+      <tr><td><strong>PCR por hipovolemia</strong></td><td>SSF 0,9%</td><td>20 ml/kg IO en bolo rápido</td><td>Recuperación de pulso</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sub-head">Ácido tranexámico en pediátrico</div>
+  <div class="cards c2">
+    <div class="card ag"><div class="card-icon">💉</div><h3>Dosis pediátrica de TXA</h3><p><strong>15 mg/kg IV/IO</strong> (máximo 1 g) en 10 minutos como dosis de carga. Segunda dosis de 15 mg/kg en 8 horas (hospitalaria). Indicado en niños ≥ 12 años o &gt; 40 kg con trauma hemorrágico grave dentro de las 3 primeras horas. En menores de 12 años o &lt; 40 kg, la evidencia es limitada — consultar protocolo local.</p></div>
+    <div class="card ab"><div class="card-icon">📏</div><h3>Cinta de Broselow</h3><p>Para calcular el peso estimado y las dosis correctas en el niño desconocido, usar la cinta de Broselow. Medir la longitud del niño en decúbito supino → la cinta indica el peso estimado y las dosis de fármacos y el material adecuado (tubo, mascarilla, palas).</p></div>
+  </div>
+
+  <div class="alert a-amb">
+    <strong>🌡️ Hipotermia pediátrica:</strong> el niño pierde calor mucho más rápido que el adulto por su mayor superficie corporal relativa. La prevención de la hipotermia es crítica en trauma pediátrico: cubrir con manta isotérmica desde el primer momento, fluidos IV templados y minimizar el tiempo de exposición. La hipotermia agrava la triada letal igual que en el adulto pero con menor tolerancia.
+  </div>
+</div>
+
+<!-- ══ 7 · AUTOEVALUACIÓN ══ -->
+<div class="section" id="sec-7">
+  <span class="sec-tag">MÓDULO 4 · AUTOEVALUACIÓN</span>
+  <div class="block-title">
+    <div class="block-num">✓</div>
+    <div class="block-title-text">
+      <h2>Autoevaluación</h2>
+      <p>10 preguntas sobre control de hemorragias, fluidoterapia y TXA</p>
+    </div>
+  </div>
+  <p class="lead">Responde antes de ver la solución. No cuenta para la nota del curso.</p>
+  <div id="quiz-container"></div>
+  <div class="quiz-score" id="quiz-score">
+    <div class="sv" id="score-val">0/10</div>
+    <p id="score-msg" style="font-size:13px;color:var(--gray3);margin-top:6px"></p>
+    <button class="btn-quiz sec" onclick="resetQuiz()" style="margin-top:1rem">Reintentar</button>
+  </div>
+</div>
+
+</main>
+
+<div class="doc-footer">
+  <span>RCP302 Formación en Emergencias · EPHTC – Essentials of Prehospital Trauma Care · Módulo 4 · Control de Hemorragias y Shock · Edición mayo–junio 2026</span>
+  <span>IPMI Official Course · Colegio Oficial de Médicos de Las Palmas</span>
+</div>
+
+<script>
+const sections = document.querySelectorAll('.section');
+const navBtns  = document.querySelectorAll('.nb');
+function show(i) {
+  sections.forEach((s,j) => s.classList.toggle('active', j===i));
+  navBtns.forEach((b,j)  => b.classList.toggle('active',  j===i));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+const QUESTIONS = [
+  { text:"¿A qué distancia proximal de la herida debe colocarse un torniquete de combate para ser eficaz?",
+    opts:["1-2 cm proximal a la herida","5-8 cm proximal a la herida","10-15 cm proximal a la herida","En cualquier lugar del segmento proximal"],
+    correct:1, feedback:"5-8 cm proximal a la herida es la distancia estándar. Demasiado cerca no permite un cierre adecuado de los vasos; demasiado lejos puede dejar tejido vascular sin comprimir. La distancia correcta garantiza la compresión efectiva de la arteria."},
+  { text:"¿Cuál es el criterio clínico que confirma que un torniquete de combate está correctamente aplicado?",
+    opts:["El paciente refiere dolor intenso en la extremidad","La extremidad distal se vuelve pálida y fría","Cese del sangrado activo y ausencia de pulso distal al torniquete","El torniquete lleva 3 giros completos de la varilla"],
+    correct:2, feedback:"El criterio definitivo de eficacia es el cese del sangrado y la ausencia de pulso distal. El número de giros es irrelevante — lo que importa es el resultado clínico. El dolor no es criterio de corrección; un torniquete puede causar dolor intenso pero ser ineficaz."},
+  { text:"Durante el empaquetamiento de una herida profunda con agente hemostático, ¿cuánto tiempo debe mantenerse la compresión manual directa?",
+    opts:["30 segundos — suficiente para que el hemostático actúe","1 minuto","3-5 minutos de compresión continua sin interrupción","Hasta que el sangrado cese visualmente"],
+    correct:2, feedback:"3-5 minutos de compresión continua son necesarios para que el agente hemostático y la cascada de coagulación formen un coágulo estable. Soltar antes de tiempo rompe el coágulo en formación y reinicia la hemorragia. No levantar la gasa para 'comprobar' durante ese tiempo."},
+  { text:"¿Cuál es la TAS objetivo en la resucitación hipotensiva de un adulto con trauma hemorrágico grave SIN TCE asociado?",
+    opts:["120 mmHg para garantizar perfusión de todos los órganos","100 mmHg","80-90 mmHg — hipotensión permisiva","60 mmHg es aceptable mientras el paciente esté consciente"],
+    correct:2, feedback:"80-90 mmHg es el objetivo en trauma sin TCE (hipotensión permisiva / Damage Control Resuscitation). Intentar normalizar la TAS a 120 mmHg con fluidos agrava la coagulopatía dilucional, la hipotermia y la acidosis — los tres vértices de la triada letal."},
+  { text:"¿Cuál es la ventana de tiempo máxima para que el TXA sea eficaz y seguro en el trauma hemorrágico?",
+    opts:["1 hora desde el trauma","3 horas desde el trauma","6 horas desde el trauma","No hay límite de tiempo si hay hemorragia activa"],
+    correct:1, feedback:"3 horas es la ventana máxima de eficacia del TXA. El estudio CRASH-2 demostró que administrado más allá de las 3 horas, el TXA no solo pierde el beneficio sino que puede aumentar la mortalidad. La administración prehospitalaria precoz maximiza su eficacia."},
+  { text:"¿Cuál es la dosis de carga de TXA en un adulto con trauma hemorrágico?",
+    opts:["500 mg IV en bolo directo","1 g IV en 10 minutos","2 g IV en 30 minutos","1 g IV en bolo rápido"],
+    correct:1, feedback:"1 g IV en 10 minutos es la dosis de carga estándar. No administrar en bolo directo rápido — puede provocar hipotensión. La velocidad de infusión lenta es parte del protocolo correcto."},
+  { text:"En la triada letal del trauma, ¿a qué valor de pH los factores de coagulación reducen su eficacia aproximadamente un 90%?",
+    opts:["pH 7.3","pH 7.2","pH 7.1","pH 7.0"],
+    correct:3, feedback:"A pH 7.0, la eficacia de los factores de coagulación se reduce aproximadamente un 90%. A pH 7.2 ya hay una reducción del 50%. Este es el mecanismo por el que la acidosis por shock no tratado genera una coagulopatía progresiva e irreversible sin tratamiento quirúrgico."},
+  { text:"En un niño de 8 años con hemorragia arterial en el muslo, ¿qué dispositivo utilizarías para el control hemostático?",
+    opts:["Torniquete CAT estándar — igual que en el adulto","Empaquetamiento con hemostático + compresión directa hasta disponer de torniquete pediátrico específico","Solo compresión directa — los torniquetes están contraindicados en menores de 12 años","Vendaje compresivo elástico circular"],
+    correct:1, feedback:"El CAT estándar no es adecuado para menores de 8 años por el tamaño de la extremidad. La alternativa es el empaquetamiento profundo con hemostático + compresión manual intensa. Si existe un torniquete específico pediátrico en la dotación, es la opción de elección. En adolescentes con extremidades de tamaño adulto, el CAT es aplicable."},
+  { text:"¿Cuál es el signo de shock más precoz y sensible en el trauma pediátrico?",
+    opts:["Hipotensión arterial","Disminución del nivel de conciencia","Taquicardia","Piel moteada y cianótica"],
+    correct:2, feedback:"La taquicardia es el primer y más sensible signo de shock en el niño. La hipotensión es un signo tardío que indica pérdida de más del 30-40% de la volemia — cuando aparece, el shock ya es descompensado y el margen de actuación es muy reducido. No esperar a la hipotensión para iniciar el tratamiento."},
+  { text:"¿Cuál es el bolo de cristaloides recomendado en el niño con shock hemorrágico descompensado?",
+    opts:["5 ml/kg en 30 minutos","10 ml/kg en 20 minutos","20 ml/kg en bolo rápido IV/IO, repetible hasta 3 veces","50 ml/kg en 1 hora"],
+    correct:2, feedback:"20 ml/kg en bolo rápido IV o IO es el estándar en shock descompensado pediátrico. Puede repetirse hasta 3 veces (60 ml/kg total) si no hay respuesta, con reevaluación tras cada bolo. Más allá de 60 ml/kg sin respuesta indica hemorragia interna no controlable con fluidos — necesidad de cirugía urgente."},
+];
+
+let answers = new Array(QUESTIONS.length).fill(null);
+let score = 0;
+
+function buildQuiz() {
+  const c = document.getElementById('quiz-container');
+  c.innerHTML = '';
+  QUESTIONS.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.id = 'q-' + qi;
+    card.innerHTML = `<div class="quiz-q">Pregunta ${qi+1} / ${QUESTIONS.length} — ${q.text}</div>
+      <div class="quiz-opts">${q.opts.map((o,oi)=>`<button class="quiz-opt" onclick="answer(${qi},${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`).join('')}</div>
+      <div class="quiz-fb" id="fb-${qi}"></div>`;
+    c.appendChild(card);
+  });
+}
+
+function answer(qi, oi) {
+  if (answers[qi] !== null) return;
+  answers[qi] = oi;
+  const q = QUESTIONS[qi];
+  const card = document.getElementById('q-' + qi);
+  card.querySelectorAll('.quiz-opt').forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === oi) btn.classList.add('wrong');
+  });
+  const ok = oi === q.correct;
+  if (ok) score++;
+  const fb = document.getElementById('fb-' + qi);
+  fb.innerHTML = `<strong>${ok ? '✓ Correcto' : '✗ Incorrecto'}.</strong> ${q.feedback}`;
+  fb.style.cssText = `background:${ok?'var(--green-lt)':'var(--red-lt)'};color:${ok?'var(--green)':'var(--red)'};padding:.7rem 1rem;border-radius:6px;font-size:12.5px;line-height:1.6`;
+  fb.classList.add('show');
+  if (answers.filter(a => a !== null).length === QUESTIONS.length) {
+    const sc = document.getElementById('quiz-score');
+    sc.style.display = 'block';
+    document.getElementById('score-val').textContent = score + '/10';
+    const pct = score * 10;
+    document.getElementById('score-msg').textContent = pct >= 80
+      ? 'Excelente — Preparado/a para la estación de control de hemorragias.'
+      : pct >= 60 ? 'Bien — Repasa los apartados de las preguntas incorrectas.'
+      : 'Necesitas refuerzo — Revisa el módulo completo antes de la simulación.';
+    setTimeout(() => sc.scrollIntoView({behavior:'smooth'}), 300);
+  }
+}
+
+function resetQuiz() {
+  answers = new Array(QUESTIONS.length).fill(null);
+  score = 0;
+  buildQuiz();
+  document.getElementById('quiz-score').style.display = 'none';
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
